@@ -39,6 +39,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="upload"
+        options={{
+          title: "Carga",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? "add" : "add-outline"} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

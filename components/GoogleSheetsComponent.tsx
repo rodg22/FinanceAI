@@ -12,8 +12,6 @@ import {
   SPREADSHEET_ID,
 } from "../config";
 
-console.log(WEB_CLIENT_ID, ANDROID_CLIENT_ID, SCOPES, SPREADSHEET_ID);
-
 export default function GoogleSheetsComponent() {
   const [user, setUser] = useState(null);
   const [sheetData, setSheetData] = useState([]);
@@ -36,6 +34,8 @@ export default function GoogleSheetsComponent() {
       fetchSheetData(token);
     }
   };
+
+  console.log(sheetData);
 
   const handleSignIn = async () => {
     try {
@@ -131,7 +131,7 @@ export default function GoogleSheetsComponent() {
     <View className="flex-1 justify-center items-center p-4 mt-10">
       {user ? (
         <>
-          <Text className="text-xl font-bold mb-4">Agregar Gasto</Text>
+          <Text className="text-xl font-bold mb-4">Cargar Datos</Text>
           {["Fecha", "Quien pago?", "Cuenta", "Monto", "Observaciones"].map(
             (label, index) => (
               <TextInput
@@ -143,7 +143,7 @@ export default function GoogleSheetsComponent() {
               />
             )
           )}
-          <Button title="Añadir Dato" onPress={addExpense} />
+          <Button title="Cargar" onPress={addExpense} />
 
           <Text className="text-xl font-bold mt-6 mb-4">
             Google Sheets Data
