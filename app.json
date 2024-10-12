@@ -28,7 +28,16 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "@react-native-google-signin/google-signin"],
+    "plugins": [
+      "expo-router",
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "¿Desea que Finance AI acceda a su micrófono?"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     },

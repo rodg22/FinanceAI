@@ -1,24 +1,38 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { TabBarIcon } from "../navigation/TabBarIcon";
 
 interface UploadDataTemplateProps {
   //   onUpload: () => void;
-  isUploading: boolean;
+  isRecording: boolean;
+  startRecording: () => void;
+  stopRecording: () => void;
+  loading: boolean;
+  text: string;
 }
 
 const UploadDataTemplate: React.FC<UploadDataTemplateProps> = ({
-  isUploading,
+  isRecording,
+  startRecording,
+  stopRecording,
+  loading,
+  text,
 }) => {
   return (
-    <View className="flex items-center h-[100vh] justify-center">
-      <Text className="text-xl font-bold mb-8">Subir Datos</Text>
-      <TouchableOpacity
-        className="bg-blue-500 p-2 rounded-md"
-        // onPress={onUpload}
-        // disabled={isUploading}
-      >
-        <Text>{isUploading ? "Subiendo..." : "Mandar audio"}</Text>
-      </TouchableOpacity>
+    <View className="flex flex-col items-center h-[100vh] justify-center">
+      <View className="flex items-center justify-center">
+        <Text className="text-xl font-bold mb-4">Subir Datos</Text>
+        <Text>
+          {loading
+            ? "..."
+            : text || "Mantén presionado el micrófono para grabar"}
+        </Text>
+      </View>
+      <View className="absolute bottom-10">
+        <TouchableOpacity onPressIn={startRecording} onPressOut={stopRecording}>
+          <TabBarIcon name={"mic-circle"} size={80} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
