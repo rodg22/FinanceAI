@@ -29,14 +29,24 @@ const accountOptions = [
 ] as const;
 
 const exampleData = {
-  fecha: "string con formato dd/mm/yyyy",
-  quienPago: "RODRIGO o MARA",
+  fecha: "formato dd/mm/yyyy",
+  quienPago: "RODRIGO o MARA, no hay otra opción",
   cuenta: "string dentro de las opciones de cuenta",
-  monto: "es un numero",
+  monto: "es un numero sin caracteres especiales",
   observaciones: "string con observaciones",
 };
 
 export const dataToSend = (text: string) =>
   `Dame el objeto Data resultante a partir del string: ${text}. Opciones de cuenta:${JSON.stringify(
     accountOptions
-  )} Ejemplo del formato de respuesta: ${JSON.stringify(exampleData)}`;
+  )} Formato requerido si no hay error: ${JSON.stringify(
+    exampleData
+  )}. Si info es insuficiente devuelve {"error": "Info insuficiente"}`;
+
+export const mockedData = [
+  "01/01/2000",
+  "RODRIGO",
+  "COMIDA",
+  "1999",
+  "Mocked observation",
+];

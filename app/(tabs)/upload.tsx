@@ -1,10 +1,12 @@
 import { ScrollView } from "react-native";
-import UploadData from "@/components/UploadData";
+import AudioToData from "@/components/AudioToData";
+import GoogleUploadData from "@/components/GoogleUploadData";
 
 export default function Data() {
   return (
-    <ScrollView>
-      <UploadData />
+    <ScrollView className="px-4">
+      <GoogleUploadData />
+      <AudioToData />
     </ScrollView>
   );
 }

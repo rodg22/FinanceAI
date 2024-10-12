@@ -1,17 +1,21 @@
 import { Alert } from "react-native";
-import React, { useState } from "react";
-import UploadDataTemplate from "./UploadData.template";
+import React, { useEffect, useState } from "react";
 import { Audio } from "expo-av";
 import axios from "axios";
 import { dataToSend } from "@/constants/constants";
+import AudioToDataTemplate from "./AudioToData.template";
+import useGoogleFetching from "@/hooks/useGoogleFetching";
 
-const UploadData: React.FC = () => {
+const AudioToData: React.FC = () => {
   const [transcript, setTranscript] = useState("");
-  const [responseData, setResponseData] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isMicrophoneButtonEnabled, setIsMicrophoneButtonEnabled] =
+    useState(true);
   const [loading, setLoading] = useState(false);
-  const [recording, setRecording] = useState<Audio.Recording>();
-  // const [AIResponse, setAIResponse] = useState(false);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [AIResponse, setAIResponse] = useState("");
+  const [responseData, setResponseData] = useState("");
+  const { handleInputChangeFromAudio } = useGoogleFetching(true);
 
   const getMicrophonePermission = async () => {
     try {
@@ -29,6 +33,15 @@ const UploadData: React.FC = () => {
       console.log(error);
       return false;
     }
+  };
+
+  const uploadData = () => handleInputChangeFromAudio(responseData);
+
+  const resetResponse = () => {
+    setTranscript("");
+    setAIResponse("");
+    setResponseData("");
+    setIsMicrophoneButtonEnabled(true);
   };
 
   const recordingOptions: any = {
@@ -84,9 +97,6 @@ const UploadData: React.FC = () => {
       const transcriptAudio = await sendAudioToWhisper(uri!);
 
       setTranscript(transcriptAudio);
-
-      // send the transcript to GPT API for response
-      await sendToGpt(transcriptAudio);
     } catch (error) {
       console.log("Failed to stop Recording", error);
       Alert.alert("Error", "Failed to stop recording");
@@ -125,8 +135,15 @@ const UploadData: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    //TODO hacer validaciones de la transcripcion antes de enviar a gpt
+    if (transcript?.length > 25) {
+      sendToGpt(transcript);
+    }
+  }, [transcript]);
+
   // send text to model
-  const sendToGpt = async (transcriptAudio: string) => {
+  const sendToGpt = async (transcript: string) => {
     try {
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -135,7 +152,7 @@ const UploadData: React.FC = () => {
           messages: [
             {
               role: "user",
-              content: dataToSend(transcriptAudio),
+              content: dataToSend(transcript),
             },
           ],
         },
@@ -146,11 +163,8 @@ const UploadData: React.FC = () => {
           },
         }
       );
-      setResponseData(
-        JSON.parse(JSON.parse(response.data.choices[0].message.content))
-      );
+      setAIResponse(response.data.choices[0].message.content);
       setLoading(false);
-      // setAIResponse(true);
       return;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -165,19 +179,26 @@ const UploadData: React.FC = () => {
     }
   };
 
-  console.log("transcript", transcript);
-  console.log("text", responseData);
+  useEffect(() => {
+    if (AIResponse) {
+      setResponseData(JSON.parse(AIResponse));
+      setIsMicrophoneButtonEnabled(false);
+    }
+  }, [AIResponse]);
 
   return (
-    <UploadDataTemplate
+    <AudioToDataTemplate
       isRecording={isRecording}
       startRecording={startRecording}
       stopRecording={stopRecording}
       loading={loading}
       transcript={transcript}
       responseData={responseData}
+      isMicrophoneButtonEnabled={isMicrophoneButtonEnabled}
+      resetResponse={resetResponse}
+      uploadData={uploadData}
     />
   );
 };
 
-export default UploadData;
+export default AudioToData;

@@ -1,0 +1,3 @@
+const IS_MOCKED_ENABLED = process.env.EXPO_PUBLIC_IS_MOCKED_ENABLED;
+
+export { IS_MOCKED_ENABLED };

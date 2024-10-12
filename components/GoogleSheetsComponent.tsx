@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, TextInput, ScrollView } from "react-native";
-import {
-  GoogleSignin,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
+import { View, Text, Button, ScrollView } from "react-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  WEB_CLIENT_ID,
-  ANDROID_CLIENT_ID,
-  SCOPES,
-  SPREADSHEET_ID,
-} from "../config";
+import { WEB_CLIENT_ID, ANDROID_CLIENT_ID, SCOPES } from "../config";
+import useGoogleFetching from "@/hooks/useGoogleFetching";
 
 export default function GoogleSheetsComponent() {
   const [user, setUser] = useState(null);
-  const [sheetData, setSheetData] = useState([]);
-  const [inputs, setInputs] = useState(["", "", "", "", ""]);
-
+  const { sheetData, setSheetData, fetchSheetData } = useGoogleFetching();
   useEffect(() => {
     GoogleSignin.configure({
       scopes: SCOPES,
@@ -31,11 +22,9 @@ export default function GoogleSheetsComponent() {
     const token = await AsyncStorage.getItem("googleToken");
     if (token) {
       setUser({ token });
-      fetchSheetData(token);
+      fetchSheetData();
     }
   };
-
-  console.log(sheetData);
 
   const handleSignIn = async () => {
     try {
@@ -44,7 +33,7 @@ export default function GoogleSheetsComponent() {
       const token = await GoogleSignin.getTokens();
       setUser(userInfo);
       await AsyncStorage.setItem("googleToken", token.accessToken);
-      fetchSheetData(token.accessToken);
+      fetchSheetData();
     } catch (error) {
       console.error("Error during sign in:", error);
     }
@@ -61,90 +50,10 @@ export default function GoogleSheetsComponent() {
     }
   };
 
-  const fetchSheetData = async (token) => {
-    try {
-      const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E40`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      if (result.values) {
-        setSheetData(result.values);
-      }
-    } catch (error) {
-      console.error("Error fetching sheet data:", error);
-    }
-  };
-
-  const handleInputChange = (text, index) => {
-    const updatedInputs = [...inputs];
-    updatedInputs[index] = text;
-    setInputs(updatedInputs);
-  };
-
-  const addExpense = async () => {
-    if (inputs.some((input) => input === "")) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    const token = await AsyncStorage.getItem("googleToken");
-
-    const nextRow = sheetData.length + 5; // Para empezar después de la fila 4
-    const range = `Octubre!A${nextRow}:E${nextRow}`;
-
-    // Convertir el monto (cuarto input) a número
-    const newExpense = [
-      inputs.map((input, index) => (index === 3 ? parseFloat(input) : input)),
-    ];
-
-    try {
-      const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}:append?valueInputOption=RAW`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            values: newExpense,
-          }),
-        }
-      );
-      const result = await response.json();
-      if (result.updates) {
-        fetchSheetData(token); // Refrescar los datos después de añadir la fila
-        alert("Gasto añadido correctamente");
-        setInputs(["", "", "", "", ""]); // Limpiar inputs
-      }
-    } catch (error) {
-      console.error("Error adding expense:", error);
-    }
-  };
-
   return (
     <View className="flex-1 justify-center items-center p-4 mt-10">
       {user ? (
         <>
-          <Text className="text-xl font-bold mb-4">Cargar Datos</Text>
-          {["Fecha", "Quien pago?", "Cuenta", "Monto", "Observaciones"].map(
-            (label, index) => (
-              <TextInput
-                key={index}
-                placeholder={label}
-                value={inputs[index]}
-                onChangeText={(text) => handleInputChange(text, index)}
-                className="border border-gray-300 p-2 mb-2 w-full"
-              />
-            )
-          )}
-          <Button title="Cargar" onPress={addExpense} />
-
           <Text className="text-xl font-bold mt-6 mb-4">
             Google Sheets Data
           </Text>
