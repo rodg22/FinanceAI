@@ -68,7 +68,7 @@ const AudioToDataTemplate: React.FC<AudioToDataTemplateProps> = ({
             ))}
             <View className="flex flex-row gap-4 mt-4 pl-3">
               <StyledPressable
-                className="bg-green-500 py-2 px-4 rounded-md"
+                className="active:opacity-70 bg-green-500 py-2 px-4 rounded-md"
                 onPress={uploadData}
               >
                 <Text className="text-white font-bold text-lg">
@@ -79,7 +79,7 @@ const AudioToDataTemplate: React.FC<AudioToDataTemplateProps> = ({
                 className="bg-slate-500 py-2 px-4 rounded-md"
                 onPress={resetResponse}
               >
-                <Text className="text-white font-bold text-lg">
+                <Text className="active:opacity-70 text-white font-bold text-lg">
                   Volver a grabar
                 </Text>
               </StyledPressable>

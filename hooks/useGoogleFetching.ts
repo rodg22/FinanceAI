@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  ANDROID_CLIENT_ID,
   SCOPES,
   SPREADSHEET_ID,
+  ANDROID_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "@/config";
 import { useState, useEffect } from "react";
@@ -105,7 +105,7 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
     const token = await AsyncStorage.getItem("googleToken");
     try {
       const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E50`,
+        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E120`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

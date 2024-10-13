@@ -5,7 +5,7 @@ import GoogleUploadData from "@/components/GoogleUploadData";
 export default function Data() {
   return (
     <ScrollView className="px-4">
-      <GoogleUploadData />
+      {/* <GoogleUploadData /> */}
       <AudioToData />
     </ScrollView>
   );

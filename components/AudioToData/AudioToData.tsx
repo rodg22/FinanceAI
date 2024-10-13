@@ -5,6 +5,7 @@ import axios from "axios";
 import { dataToSend } from "@/constants/constants";
 import AudioToDataTemplate from "./AudioToData.template";
 import useGoogleFetching from "@/hooks/useGoogleFetching";
+import { OPENAI_API_KEY } from "@/config/config";
 
 const AudioToData: React.FC = () => {
   const [transcript, setTranscript] = useState("");
@@ -113,14 +114,12 @@ const AudioToData: React.FC = () => {
         type: "audio/m4a",
       });
 
-      const API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
-
       const response = await axios.post(
         "https://api.openai.com/v1/audio/transcriptions",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -158,7 +157,7 @@ const AudioToData: React.FC = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "application/json",
           },
         }

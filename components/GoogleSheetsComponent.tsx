@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button, ScrollView } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { WEB_CLIENT_ID, ANDROID_CLIENT_ID, SCOPES } from "../config";
+import { ANDROID_CLIENT_ID, SCOPES, WEB_CLIENT_ID } from "../config";
 import useGoogleFetching from "@/hooks/useGoogleFetching";
 
 export default function GoogleSheetsComponent() {
@@ -36,6 +36,7 @@ export default function GoogleSheetsComponent() {
       fetchSheetData();
     } catch (error) {
       console.error("Error during sign in:", error);
+      alert(`Error during sign in: ${JSON.stringify(error)}`);
     }
   };
 
@@ -46,6 +47,7 @@ export default function GoogleSheetsComponent() {
       setUser(null);
       setSheetData([]);
     } catch (error) {
+      alert(`Sign out error: ${JSON.stringify(error)}`);
       console.error("Sign out error:", error);
     }
   };

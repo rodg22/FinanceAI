@@ -6,13 +6,32 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "WEB_CLIENT_ID": "WEB_CLIENT_ID",
+        "ANDROID_CLIENT_ID": "ANDROID_CLIENT_ID",
+        "SCOPES": "SCOPES",
+        "SPREADSHEET_ID": "SPREADSHEET_ID",
+        "OPENAI_API_KEY": "OPENAI_API_KEY",
+        "EXPO_PUBLIC_IS_MOCKED_ENABLED": "false"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production",
+      "env": {
+        "WEB_CLIENT_ID": "WEB_CLIENT_ID",
+        "ANDROID_CLIENT_ID": "ANDROID_CLIENT_ID",
+        "SCOPES": "SCOPES",
+        "SPREADSHEET_ID": "SPREADSHEET_ID",
+        "OPENAI_API_KEY": "OPENAI_API_KEY",
+        "EXPO_PUBLIC_IS_MOCKED_ENABLED": "false"
+      }
     }
   },
   "submit": {
