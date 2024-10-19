@@ -1,64 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Button, ScrollView } from "react-native";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ANDROID_CLIENT_ID, SCOPES, WEB_CLIENT_ID } from "../config";
+
 import useGoogleFetching from "@/hooks/useGoogleFetching";
 
 export default function GoogleSheetsComponent() {
-  const [user, setUser] = useState(null);
   const { sheetData, setSheetData, fetchSheetData } = useGoogleFetching();
+
   useEffect(() => {
-    GoogleSignin.configure({
-      scopes: SCOPES,
-      webClientId: WEB_CLIENT_ID,
-      androidClientId: ANDROID_CLIENT_ID,
-      offlineAccess: true,
-    });
-    checkExistingToken();
+    fetchSheetData();
   }, []);
-
-  const checkExistingToken = async () => {
-    const token = await AsyncStorage.getItem("googleToken");
-    if (token) {
-      setUser({ token });
-      fetchSheetData();
-    }
-  };
-
-  const handleSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      const token = await GoogleSignin.getTokens();
-      setUser(userInfo);
-      await AsyncStorage.setItem("googleToken", token.accessToken);
-      fetchSheetData();
-    } catch (error) {
-      console.error("Error during sign in:", error);
-      alert(`Error during sign in: ${JSON.stringify(error)}`);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-      await AsyncStorage.removeItem("googleToken");
-      setUser(null);
-      setSheetData([]);
-    } catch (error) {
-      alert(`Sign out error: ${JSON.stringify(error)}`);
-      console.error("Sign out error:", error);
-    }
-  };
 
   return (
     <View className="flex-1 justify-center items-center p-4 mt-10">
-      {user ? (
+      {sheetData ? (
         <>
-          <Text className="text-xl font-bold mt-6 mb-4">
-            Google Sheets Data
-          </Text>
           <ScrollView horizontal className="mb-4">
             <View>
               {sheetData.map((row, rowIndex) => (
@@ -83,10 +38,9 @@ export default function GoogleSheetsComponent() {
               ))}
             </View>
           </ScrollView>
-          <Button title="Sign Out" onPress={handleSignOut} />
         </>
       ) : (
-        <Button title="Sign In with Google" onPress={handleSignIn} />
+        <Text>Cargando Información...</Text>
       )}
     </View>
   );

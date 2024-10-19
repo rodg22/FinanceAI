@@ -1,11 +1,22 @@
-import { Image, StyleSheet, Platform } from "react-native";
+import { Image, StyleSheet, Platform, Button } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useAuthentication } from "@/hooks/useAuthentication";
+import { useEffect } from "react";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
+  const { user, handleSignOut } = useAuthentication();
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     router.replace("/");
+  //   }
+  // }, [user]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#d6dbdf", dark: "#d6dbdf" }}
@@ -40,6 +51,8 @@ export default function HomeScreen() {
           Navegá a "Carga" para reportar gastos e ingresos.
         </ThemedText>
       </ThemedView>
+
+      <Button title="Desloguearse" onPress={handleSignOut} />
     </ParallaxScrollView>
   );
 }
