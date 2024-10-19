@@ -18,7 +18,6 @@ export default function Login() {
       const token = await GoogleSignin.getTokens();
       setUser(userInfo);
       await AsyncStorage.setItem("googleToken", token.accessToken);
-      alert("Usuario logueado con éxito");
       console.log("Usuario logueado con éxito");
       router.replace("/(tabs)/");
     } catch (error) {
@@ -28,11 +27,6 @@ export default function Login() {
       setLoading(false); // Finaliza el estado de carga
     }
   };
-
-  // // Si el usuario está logueado, redirigir al home ("/tabs")
-  // if (user) {
-  //   return <Redirect href="/(tabs)" />;
-  // }
 
   return (
     <View className="flex-1 justify-center items-center gap-4">

@@ -22,7 +22,7 @@ export const useAuthentication = () => {
       await GoogleSignin.signOut();
       await AsyncStorage.removeItem("googleToken");
       setUser(null);
-      alert("Deslogueado correctamente");
+      console.log("Deslogueado correctamente");
       router.replace("/login");
     } catch (error) {
       alert(`Error de deslogueo: ${JSON.stringify(error)}`);

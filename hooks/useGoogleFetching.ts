@@ -59,8 +59,6 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
       uploadableData = inputs;
     }
 
-    console.log("uploadableData", uploadableData);
-
     const token = await AsyncStorage.getItem("googleToken");
     const sheetDataStored = JSON.parse(
       (await AsyncStorage.getItem("sheetData")) || "[]"
@@ -98,28 +96,51 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
       }
     } catch (error) {
       console.error("Error adding expense:", error);
+      alert("Error subiendo los datos!");
     }
   };
 
   const fetchSheetData = async () => {
-    const token = await AsyncStorage.getItem("googleToken");
+    const URL =
+      "https://giudice-automations.app.n8n.cloud/webhook/ef53e005-ac8d-41c2-a3d5-512debfdffbc";
     try {
-      const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E120`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      if (result.values) {
-        setSheetData(result.values);
-        await AsyncStorage.setItem("sheetData", JSON.stringify(result.values));
+      const response = await fetch(URL);
+      console.log("response", response);
+
+      // Verifica si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const result = await response.json();
+      console.log("result", result);
+
+      // Directamente puedes usar result, ya que es un array de objetos
+      setSheetData(result);
+      await AsyncStorage.setItem("sheetData", JSON.stringify(result));
     } catch (error) {
+      alert("Error fetching sheet data");
       console.error("Error fetching sheet data:", error);
     }
+
+    // const token = await AsyncStorage.getItem("googleToken");
+    // try {
+    //   const response = await fetch(
+    //     `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E120`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     }
+    //   );
+    //   const result = await response.json();
+    //   if (result.values) {
+    //     setSheetData(result.values);
+    //     await AsyncStorage.setItem("sheetData", JSON.stringify(result.values));
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching sheet data:", error);
+    // }
   };
 
   return {

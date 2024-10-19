@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { View, Text, Button, ScrollView } from "react-native";
 
 import useGoogleFetching from "@/hooks/useGoogleFetching";
 
 export default function GoogleSheetsComponent() {
-  const { sheetData, setSheetData, fetchSheetData } = useGoogleFetching();
+  const { sheetData, fetchSheetData } = useGoogleFetching();
 
   useEffect(() => {
     fetchSheetData();
@@ -12,13 +12,14 @@ export default function GoogleSheetsComponent() {
 
   return (
     <View className="flex-1 justify-center items-center p-4 mt-10">
-      {sheetData ? (
+      <Button title="Actualizar" onPress={fetchSheetData} />
+      {sheetData?.length ? (
         <>
-          <ScrollView horizontal className="mb-4">
+          <ScrollView horizontal className="my-4">
             <View>
-              {sheetData.map((row, rowIndex) => (
+              {sheetData?.map((row, rowIndex) => (
                 <View key={rowIndex} className="flex flex-row">
-                  {row.map((cell, cellIndex) => (
+                  {Object.values(row)?.map((cell, cellIndex) => (
                     <View
                       key={cellIndex}
                       className={`border border-gray-300 p-2 w-24 ${
