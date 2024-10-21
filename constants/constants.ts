@@ -29,9 +29,8 @@ const accountOptions = [
 ] as const;
 
 const exampleData = {
-  fecha: "formato dd/mm/yyyy",
   quienPago: "RODRIGO o MARA, no hay otra opción",
-  cuenta: "string dentro de las opciones de cuenta",
+  cuenta: "string dentro de las Opciones de cuenta",
   monto: "es un numero sin caracteres especiales",
   observaciones: "string con observaciones",
 };
@@ -43,10 +42,4 @@ export const dataToSend = (text: string) =>
     exampleData
   )}. Si info es insuficiente devuelve {"error": "Info insuficiente"}`;
 
-export const mockedData = [
-  "01/01/2000",
-  "RODRIGO",
-  "COMIDA",
-  "1999",
-  "Mocked observation",
-];
+export const mockedData = ["RODRIGO", "COMIDA", "1999", "Mocked observation"];
