@@ -53,6 +53,8 @@ module.exports = {
     SCOPES: [process.env.SCOPES],
     SPREADSHEET_ID: process.env.SPREADSHEET_ID,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    GET_SPREADSHEET_URL: process.env.GET_SPREADSHEET_URL,
+    EDIT_SPREADSHEET_URL: process.env.EDIT_SPREADSHEET_URL,
   },
   owner: "rodg22",
   runtimeVersion: {

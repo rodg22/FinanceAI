@@ -135,13 +135,11 @@ const AudioToData: React.FC = () => {
   };
 
   useEffect(() => {
-    //TODO hacer validaciones de la transcripcion antes de enviar a gpt
     if (transcript?.length > 25) {
       sendToGpt(transcript);
     }
   }, [transcript]);
 
-  // send text to model
   const sendToGpt = async (transcript: string) => {
     try {
       const response = await axios.post(

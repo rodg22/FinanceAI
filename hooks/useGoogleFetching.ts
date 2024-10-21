@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   SCOPES,
-  SPREADSHEET_ID,
   ANDROID_CLIENT_ID,
   WEB_CLIENT_ID,
+  EDIT_SPREADSHEET_URL,
+  GET_SPREADSHEET_URL,
 } from "@/config";
 import { useState, useEffect } from "react";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -54,41 +55,28 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
 
     if (dataFromAudio) {
       const inputFromAudio = await AsyncStorage.getItem("inputFromAudio");
+      console.log("inputFromAudio", inputFromAudio);
       uploadableData = inputFromAudio && JSON.parse(inputFromAudio);
     } else {
       uploadableData = inputs;
     }
 
-    const token = await AsyncStorage.getItem("googleToken");
-    const sheetDataStored = JSON.parse(
-      (await AsyncStorage.getItem("sheetData")) || "[]"
-    );
-
-    const nextRow = sheetDataStored?.length + 5; // Para empezar después de la fila 4 por mi planilla en especifico
-    const range = `Octubre!A${nextRow}:E${nextRow}`;
-
-    // Convertir el monto (cuarto input) a número
-    const newExpense = [
-      uploadableData.map((input: string, index: number) =>
-        index === 3 ? parseFloat(input) : input
-      ),
-    ];
+    const body = JSON.stringify({
+      fecha: uploadableData[0],
+      quienPago: uploadableData[1],
+      cuenta: uploadableData[2],
+      monto: parseFloat(uploadableData[3]),
+      observaciones: uploadableData[4],
+    });
 
     try {
-      const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}:append?valueInputOption=RAW`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            values: newExpense,
-          }),
-        }
-      );
+      const response = await fetch(EDIT_SPREADSHEET_URL, {
+        method: "POST",
+        body,
+      });
+      console.log("response", response);
       const result = await response.json();
+      console.log("result", result);
       if (result.updates) {
         alert("Datos subidos correctamente!");
         fetchSheetData();
@@ -101,10 +89,8 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
   };
 
   const fetchSheetData = async () => {
-    const URL =
-      "https://giudice-automations.app.n8n.cloud/webhook/ef53e005-ac8d-41c2-a3d5-512debfdffbc";
     try {
-      const response = await fetch(URL);
+      const response = await fetch(GET_SPREADSHEET_URL);
       console.log("response", response);
 
       // Verifica si la respuesta es exitosa
@@ -122,25 +108,6 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
       alert("Error fetching sheet data");
       console.error("Error fetching sheet data:", error);
     }
-
-    // const token = await AsyncStorage.getItem("googleToken");
-    // try {
-    //   const response = await fetch(
-    //     `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Octubre!A5:E120`,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
-    //   const result = await response.json();
-    //   if (result.values) {
-    //     setSheetData(result.values);
-    //     await AsyncStorage.setItem("sheetData", JSON.stringify(result.values));
-    //   }
-    // } catch (error) {
-    //   console.error("Error fetching sheet data:", error);
-    // }
   };
 
   return {
