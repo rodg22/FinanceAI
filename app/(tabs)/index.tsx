@@ -5,17 +5,9 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAuthentication } from "@/hooks/useAuthentication";
-import { useEffect } from "react";
-import { router } from "expo-router";
 
 export default function HomeScreen() {
   const { user, handleSignOut } = useAuthentication();
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     router.replace("/");
-  //   }
-  // }, [user]);
 
   return (
     <ParallaxScrollView
@@ -52,7 +44,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
 
-      <Button title="Desloguearse" onPress={handleSignOut} />
+      {/* <Button title="Desloguearse" onPress={handleSignOut} /> */}
     </ParallaxScrollView>
   );
 }

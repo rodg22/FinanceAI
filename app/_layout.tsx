@@ -49,7 +49,8 @@ export default function RootLayout() {
   // Renderiza el login si no hay usuario, sino, el Slot
   return (
     <ThemeProvider value={DefaultTheme}>
-      {user ? <Slot /> : <Login />}
+      {/* {user ? <Slot /> : <Login />} */}
+      <Slot />
     </ThemeProvider>
   );
 }
