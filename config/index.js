@@ -3,6 +3,8 @@ import {
   ANDROID_CLIENT_ID,
   SCOPES,
   SPREADSHEET_ID,
+  GET_SPREADSHEET_URL,
+  EDIT_SPREADSHEET_URL,
 } from "./config";
 import { IS_MOCKED_ENABLED } from "./featureFlags";
 
@@ -12,4 +14,6 @@ export {
   SCOPES,
   SPREADSHEET_ID,
   IS_MOCKED_ENABLED,
+  GET_SPREADSHEET_URL,
+  EDIT_SPREADSHEET_URL,
 };

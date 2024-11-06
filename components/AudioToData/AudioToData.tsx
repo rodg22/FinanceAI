@@ -135,13 +135,11 @@ const AudioToData: React.FC = () => {
   };
 
   useEffect(() => {
-    //TODO hacer validaciones de la transcripcion antes de enviar a gpt
     if (transcript?.length > 25) {
       sendToGpt(transcript);
     }
   }, [transcript]);
 
-  // send text to model
   const sendToGpt = async (transcript: string) => {
     try {
       const response = await axios.post(
@@ -180,8 +178,30 @@ const AudioToData: React.FC = () => {
 
   useEffect(() => {
     if (AIResponse) {
-      setResponseData(JSON.parse(AIResponse));
-      setIsMicrophoneButtonEnabled(false);
+      try {
+        const data = JSON.parse(AIResponse);
+        const now = new Date();
+        const utcOffset = -3 * 60;
+        const localDate = new Date(now.getTime() + utcOffset * 60 * 1000);
+
+        const dia = localDate.getDate();
+        const mes = localDate.getMonth() + 1;
+        const anio = localDate.getFullYear();
+
+        const formattedDia = dia < 10 ? "0" + dia : dia;
+        const formattedMes = mes < 10 ? "0" + mes : mes;
+        const fecha = `${formattedDia}/${formattedMes}/${anio}`;
+
+        const updatedData = {
+          fecha,
+          ...data,
+        };
+
+        setResponseData(updatedData);
+        setIsMicrophoneButtonEnabled(false);
+      } catch (error) {
+        console.error("Error parsing AIResponse:", error);
+      }
     }
   }, [AIResponse]);
 
