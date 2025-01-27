@@ -2,10 +2,8 @@ import { Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Audio } from "expo-av";
 import axios from "axios";
-import { dataToSend } from "@/constants/constants";
 import AudioToDataTemplate from "./AudioToData.template";
 import useGoogleFetching from "@/hooks/useGoogleFetching";
-import { OPENAI_API_KEY } from "@/config/config";
 
 const AudioToData: React.FC = () => {
   const [transcript, setTranscript] = useState("");
@@ -14,7 +12,7 @@ const AudioToData: React.FC = () => {
     useState(true);
   const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [AIResponse, setAIResponse] = useState("");
+  const [AIResponse, setAIResponse] = useState({ data: "", transcript: "" });
   const [responseData, setResponseData] = useState("");
   const { handleInputChangeFromAudio } = useGoogleFetching(true);
 
@@ -36,11 +34,20 @@ const AudioToData: React.FC = () => {
     }
   };
 
-  const uploadData = () => handleInputChangeFromAudio(responseData);
+  const uploadData = async () => {
+    try {
+      // Esperamos la respuesta de la función asíncrona
+      const result = await handleInputChangeFromAudio(responseData);
+      // Solo se ejecuta si no hubo excepción
+      result && resetResponse();
+    } catch (error) {
+      console.error("Error uploading data", error);
+    }
+  };
 
   const resetResponse = () => {
     setTranscript("");
-    setAIResponse("");
+    setAIResponse({ data: "", transcript: "" });
     setResponseData("");
     setIsMicrophoneButtonEnabled(true);
   };
@@ -78,6 +85,8 @@ const AudioToData: React.FC = () => {
       const { recording } = await Audio.Recording.createAsync(recordingOptions);
       setRecording(recording);
     } catch (error) {
+      setIsRecording(false);
+      setLoading(false);
       console.log("Error al empezar a grabar", error);
       Alert.alert("Error", "Error al grabar, intente de nuevo.");
     }
@@ -88,26 +97,28 @@ const AudioToData: React.FC = () => {
       setIsRecording(false);
       setLoading(true);
       await recording?.stopAndUnloadAsync();
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
 
-      const uri = recording?.getURI();
+      const uri = recording?.getURI() || "";
 
-      // send audio to whisper API for transcription
-      const transcriptAudio = await sendAudioToWhisper(uri!);
-
-      setTranscript(transcriptAudio);
+      // Send audio to n8n workflow
+      const aiResponse = await sendAudioTon8n(uri!);
+      console.log("aiResponse", aiResponse);
+      setAIResponse(aiResponse);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log("Failed to stop Recording", error);
       Alert.alert("Error", "Failed to stop recording");
     }
   };
 
-  const sendAudioToWhisper = async (uri: string) => {
+  const sendAudioTon8n = async (uri: string) => {
     try {
       const formData: any = new FormData();
-      formData.append("model", "whisper-1");
       formData.append("file", {
         uri: uri,
         name: "recording.m4a",
@@ -115,89 +126,32 @@ const AudioToData: React.FC = () => {
       });
 
       const response = await axios.post(
-        "https://api.openai.com/v1/audio/transcriptions",
+        "https://n8n.giutech-innovations.com.ar/webhook/924cd8b4-f968-4a84-ba8a-291b638507bb",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "multipart/form-data",
           },
         }
       );
-      return response.data.text;
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("Axios error:", error.response?.data || error.message);
+        alert(error.response?.data || error.message);
       } else {
-        console.log("Error:", error);
+        alert(error);
       }
     }
   };
 
   useEffect(() => {
-    if (transcript?.length > 25) {
-      sendToGpt(transcript);
-    }
-  }, [transcript]);
-
-  const sendToGpt = async (transcript: string) => {
-    try {
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "user",
-              content: dataToSend(transcript),
-            },
-          ],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setAIResponse(response.data.choices[0].message.content);
-      setLoading(false);
-      return;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error mandando el texto a gpt:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-      } else {
-        console.error("Error:", error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (AIResponse) {
+    if (AIResponse.data) {
       try {
-        const data = JSON.parse(AIResponse);
-        const now = new Date();
-        const utcOffset = -3 * 60;
-        const localDate = new Date(now.getTime() + utcOffset * 60 * 1000);
-
-        const dia = localDate.getDate();
-        const mes = localDate.getMonth() + 1;
-        const anio = localDate.getFullYear();
-
-        const formattedDia = dia < 10 ? "0" + dia : dia;
-        const formattedMes = mes < 10 ? "0" + mes : mes;
-        const fecha = `${formattedDia}/${formattedMes}/${anio}`;
-
-        const updatedData = {
-          fecha,
-          ...data,
-        };
-
-        setResponseData(updatedData);
+        console.log("AIResponse", AIResponse);
+        const { data, transcript } = AIResponse;
+        console.log("data", data);
+        setTranscript(transcript);
+        setResponseData(data);
         setIsMicrophoneButtonEnabled(false);
       } catch (error) {
         console.error("Error parsing AIResponse:", error);

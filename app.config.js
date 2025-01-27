@@ -52,7 +52,7 @@ module.exports = {
     ANDROID_CLIENT_ID: process.env.ANDROID_CLIENT_ID,
     SCOPES: [process.env.SCOPES],
     SPREADSHEET_ID: process.env.SPREADSHEET_ID,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    N8N_AGENT_URL: process.env.N8N_AGENT_URL,
     GET_SPREADSHEET_URL: process.env.GET_SPREADSHEET_URL,
     EDIT_SPREADSHEET_URL: process.env.EDIT_SPREADSHEET_URL,
   },

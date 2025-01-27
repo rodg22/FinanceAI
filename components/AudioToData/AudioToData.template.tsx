@@ -42,7 +42,9 @@ const AudioToDataTemplate: React.FC<AudioToDataTemplateProps> = ({
         <View className="text-md text-center flex gap-2">
           {!loading && !transcript ? (
             <Text className="text-md text-center">
-              {isRecording ? "Grabando..." : "Mantén presionado para grabar"}
+              {isRecording
+                ? "Grabando..."
+                : "Mantén presionado para grabar, suelta para detener"}
             </Text>
           ) : transcript ? (
             <>
@@ -68,14 +70,6 @@ const AudioToDataTemplate: React.FC<AudioToDataTemplateProps> = ({
             ))}
             <View className="flex flex-row gap-4 mt-4 pl-3">
               <StyledPressable
-                className="active:opacity-70 bg-green-500 py-2 px-4 rounded-md"
-                onPress={uploadData}
-              >
-                <Text className="text-white font-bold text-lg">
-                  Subir Datos
-                </Text>
-              </StyledPressable>
-              <StyledPressable
                 className="bg-slate-500 py-2 px-4 rounded-md"
                 onPress={resetResponse}
               >
@@ -83,12 +77,20 @@ const AudioToDataTemplate: React.FC<AudioToDataTemplateProps> = ({
                   Volver a grabar
                 </Text>
               </StyledPressable>
+              <StyledPressable
+                className="active:opacity-70 bg-green-500 py-2 px-4 rounded-md"
+                onPress={uploadData}
+              >
+                <Text className="text-white font-bold text-lg">
+                  Subir Datos
+                </Text>
+              </StyledPressable>
             </View>
           </View>
         )}
       </View>
       {isMicrophoneButtonEnabled ? (
-        <View className="absolute bottom-10">
+        <View className="absolute bottom-24">
           <StyledPressable
             className="active:opacity-70 bg-green-500 rounded-full p-4"
             onLongPress={startRecording}
