@@ -4,6 +4,7 @@ import { Audio } from "expo-av";
 import axios from "axios";
 import AudioToDataTemplate from "./AudioToData.template";
 import useGoogleFetching from "@/hooks/useGoogleFetching";
+import { N8N_AGENT_URL } from "@/config/config";
 
 const AudioToData: React.FC = () => {
   const [transcript, setTranscript] = useState("");
@@ -106,7 +107,6 @@ const AudioToData: React.FC = () => {
 
       // Send audio to n8n workflow
       const aiResponse = await sendAudioTon8n(uri!);
-      console.log("aiResponse", aiResponse);
       setAIResponse(aiResponse);
       setLoading(false);
     } catch (error) {
@@ -125,16 +125,12 @@ const AudioToData: React.FC = () => {
         type: "audio/m4a",
       });
 
-      const response = await axios.post(
-        "https://n8n.giutech-innovations.com.ar/webhook/924cd8b4-f968-4a84-ba8a-291b638507bb",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      return response.data;
+      const response = await axios.post(N8N_AGENT_URL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response?.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data || error.message);
@@ -147,9 +143,7 @@ const AudioToData: React.FC = () => {
   useEffect(() => {
     if (AIResponse.data) {
       try {
-        console.log("AIResponse", AIResponse);
         const { data, transcript } = AIResponse;
-        console.log("data", data);
         setTranscript(transcript);
         setResponseData(data);
         setIsMicrophoneButtonEnabled(false);
