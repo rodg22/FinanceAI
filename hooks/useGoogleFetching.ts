@@ -42,7 +42,8 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
       "inputFromAudio",
       JSON.stringify(inputFromAudio)
     );
-    await addExpense();
+    const result = await addExpense();
+    return result
   };
 
   const addExpense = async () => {
@@ -81,6 +82,7 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
         alert("Datos subidos correctamente!");
         fetchSheetData();
         setInputs(["", "", "", "", ""]);
+        return result;
       }
     } catch (error) {
       console.error("Error adding expense:", error);
@@ -88,7 +90,7 @@ const useGoogleFetching = (dataFromAudio: boolean = false) => {
     }
   };
 
-  const fetchSheetData = async () => {
+  const fetchSheetData:any = async () => {
     try {
       const response = await fetch(GET_SPREADSHEET_URL);
       console.log("response", response);

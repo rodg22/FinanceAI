@@ -22,12 +22,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Carga",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home" : "home-outline"}
-              color={color}
-            />
+            <TabBarIcon name={focused ? "add" : "add-outline"} color={color} />
           ),
         }}
       />
@@ -44,11 +41,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="upload"
+        name="instructive"
         options={{
-          title: "Carga",
+          title: "Instructivo",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "add" : "add-outline"} color={color} />
+            <TabBarIcon
+              name={focused ? "document-text" : "document-text-outline"}
+              color={color}
+            />
           ),
         }}
       />

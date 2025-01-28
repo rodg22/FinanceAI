@@ -52,14 +52,12 @@ module.exports = {
     ANDROID_CLIENT_ID: process.env.ANDROID_CLIENT_ID,
     SCOPES: [process.env.SCOPES],
     SPREADSHEET_ID: process.env.SPREADSHEET_ID,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    N8N_AGENT_URL: process.env.N8N_AGENT_URL,
     GET_SPREADSHEET_URL: process.env.GET_SPREADSHEET_URL,
     EDIT_SPREADSHEET_URL: process.env.EDIT_SPREADSHEET_URL,
   },
   owner: "rodg22",
-  runtimeVersion: {
-    policy: "appVersion",
-  },
+  runtimeVersion: "1.0.0",
   updates: {
     url: "https://u.expo.dev/3b243cc4-66c2-4c9d-b954-ede10e6e59af",
   },
